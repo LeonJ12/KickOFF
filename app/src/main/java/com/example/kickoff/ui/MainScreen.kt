@@ -37,7 +37,7 @@ import com.example.kickoff.R
 val Green = Color(0xFF1E6030)
 val Yellow = Color(0xFFFFFF00)
 
-
+@Preview(showBackground = true)
 @Composable
 fun MainScreen()
 {
@@ -49,7 +49,7 @@ fun MainScreen()
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        titleLogo(icon = R.drawable.trophy)
+        TitleLogo(icon = R.drawable.trophy)
 
         Description(
             title="WORLD CUP",
@@ -68,7 +68,7 @@ fun MainScreen()
 }
 
 @Composable
-fun titleLogo(
+fun TitleLogo(
     @DrawableRes icon: Int
 ){
     Column(

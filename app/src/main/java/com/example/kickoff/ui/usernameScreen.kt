@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,11 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.kickoff.R
 
-@Preview(showBackground = true )
+@Preview(showBackground = true)
 @Composable
 fun UsernameScreen() {
-    var username by remember { mutableStateOf("") }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,11 +57,7 @@ fun UsernameScreen() {
                 backOnClick = { }
             )
         }
-
-        InputUser(
-            text = username,
-            onValueChange = { username = it }
-        )
+        InputUser()
         UserButtons(
             guestIcon = R.drawable.green_user,
             arrowIcon = R.drawable.fast_forward_filled,
@@ -96,10 +91,8 @@ fun SmallButton(
 }
 
 @Composable
-fun InputUser(
-    text: String,
-    onValueChange: (String) -> Unit
-) {
+fun InputUser() {
+    var username by remember { mutableStateOf("") }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -110,10 +103,9 @@ fun InputUser(
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold
         )
-
         OutlinedTextField(
-            value = text,
-            onValueChange = onValueChange,
+            value = username,
+            onValueChange = { username = it },
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
             modifier = Modifier.fillMaxWidth(),
