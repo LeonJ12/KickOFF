@@ -11,14 +11,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.example.kickoff.FINALS_SCREEN
 import com.example.kickoff.R
 import com.example.kickoff.Team
 
-@Preview(showBackground = true)
+
 @Composable
-fun SemiFinalsScreen()
+fun SemiFinalsScreen(navController : NavHostController)
 {
     val match1 = Pair(
         Team("Njemačka", R.drawable.germany),
@@ -43,7 +45,7 @@ fun SemiFinalsScreen()
         ) {
             SmallButton(
                 icon = R.drawable.arrow_back,
-                backOnClick = { }
+                backOnClick = {navController.popBackStack() }
             )
             Header(
                 text = "POLUFINALE"
@@ -61,7 +63,7 @@ fun SemiFinalsScreen()
         ContinueButton(
             icon = R.drawable.fast_forward_filled,
             continueTitle = "Slijedeća faza",
-            continueClick = {}
+            continueClick = {navController.navigate(FINALS_SCREEN)}
         )
     }
 }

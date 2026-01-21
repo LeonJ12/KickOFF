@@ -26,15 +26,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.kickoff.R
 import com.example.kickoff.Team
 
-@Preview(showBackground = true)
+
 @Composable
-fun FinalsScreen()
+fun FinalsScreen(navController : NavHostController)
 {
     val match1 = Pair(
         Team("Njemačka", R.drawable.germany),
@@ -56,7 +57,7 @@ fun FinalsScreen()
         ) {
             FinalSmallButton(
                 icon = R.drawable.arrow_back,
-                backOnClick = { }
+                backOnClick = {navController.popBackStack() }
             )
             FinalHeader(
                 text = "FINALE"
@@ -75,7 +76,7 @@ fun FinalsScreen()
             item { FinalMatchCard( team1 = match1.first, team2 = match1.second) }
         }
         FinalContinueButton(
-            icon = R.drawable.fast_forward_filled,
+            icon = R.drawable.black_user,
             continueTitle = "Spremi predikciju",
             continueClick = {}
         )
@@ -97,20 +98,20 @@ fun FinalDescription(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(20.dp),
+                .padding(30.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = "trofej",
-                modifier = Modifier.size(100.dp),
+                modifier = Modifier.size(140.dp),
                 tint = Color.Black
             )
             Text(
                 text = text,
                 color = Color.Black,
-                fontSize = 20.sp,
+                fontSize = 25.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 lineHeight = 24.sp

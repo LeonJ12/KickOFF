@@ -22,16 +22,18 @@ import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.kickoff.R
+import com.example.kickoff.SEMIFINALS_SCREEN
 import com.example.kickoff.Team
 
 
-@Preview(showBackground = true)
+
 @Composable
-fun QuarterfinalsScreen()
+fun QuarterfinalsScreen(navController : NavHostController)
 {
     val match1 = Pair(
         Team("Njemačka", R.drawable.germany),
@@ -64,7 +66,7 @@ fun QuarterfinalsScreen()
         ) {
             SmallButton(
                 icon = R.drawable.arrow_back,
-                backOnClick = { }
+                backOnClick = { navController.popBackStack()}
             )
             Header(
                 text = "ČETVRTFINALE"
@@ -84,7 +86,7 @@ fun QuarterfinalsScreen()
         ContinueButton(
             icon = R.drawable.fast_forward_filled,
             continueTitle = "Slijedeća faza",
-            continueClick = {}
+            continueClick = {navController.navigate(SEMIFINALS_SCREEN)}
         )
     }
 }

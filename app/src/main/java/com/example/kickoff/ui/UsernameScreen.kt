@@ -31,14 +31,15 @@ import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.kickoff.GROUPS_SCREEN
 import com.example.kickoff.R
 
-@Preview(showBackground = true)
+
 @Composable
-fun UsernameScreen() {
+fun UsernameScreen(navController : NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -53,7 +54,7 @@ fun UsernameScreen() {
         {
             SmallButton(
                 icon = R.drawable.arrow_back,
-                backOnClick = { }
+                backOnClick = {navController.popBackStack()}
             )
         }
         InputUser()
@@ -63,7 +64,7 @@ fun UsernameScreen() {
             guestTitle = "Dohvati zadnju predikciju",
             loginTitle = "Započni turnir",
             getPrediction = { },
-            startTournament = { }
+            startTournament = {navController.navigate(GROUPS_SCREEN)}
         )
     }
 }
