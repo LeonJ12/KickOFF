@@ -1,18 +1,16 @@
 package com.example.kickoff.ui
-import androidx.annotation.DrawableRes
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -21,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,36 +31,24 @@ import com.example.kickoff.Team
 
 @Preview(showBackground = true)
 @Composable
-fun GroupsScreen() {
-
-    val groupA = listOf(
+fun QuarterfinalsScreen()
+{
+    val match1 = Pair(
         Team("Njemačka", R.drawable.germany),
+        Team("Hrvatska", R.drawable.croatia)
+    )
+    val match2 = Pair(
         Team("Škotska", R.drawable.scotland),
-        Team("Mađarska", R.drawable.hungary),
-        Team("Švicarska", R.drawable.switzerland)
+        Team("Španjolska", R.drawable.spain)
     )
-
-    val groupB = listOf(
-        Team("Španjolska", R.drawable.spain),
-        Team("Hrvatska", R.drawable.croatia),
-        Team("Italija", R.drawable.italy),
-        Team("Albanija", R.drawable.albania)
-    )
-
-    val groupC = listOf(
+    val match3 = Pair(
         Team("Slovenija", R.drawable.slovenia),
-        Team("Danska", R.drawable.denmark),
-        Team("Srbija", R.drawable.serbia),
-        Team("Engleska", R.drawable.england)
-    )
-
-    val groupD = listOf(
-        Team("Poljska", R.drawable.poland),
-        Team("Nizozemska", R.drawable.netherlands),
-        Team("Austrija", R.drawable.austria),
         Team("Francuska", R.drawable.france)
     )
-
+    val match4 = Pair(
+        Team("Danska", R.drawable.denmark),
+        Team("Poljska", R.drawable.poland)
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -80,7 +67,7 @@ fun GroupsScreen() {
                 backOnClick = { }
             )
             Header(
-                text = "GRUPNA FAZA"
+                text = "ČETVRTFINALE"
             )
         }
         LazyColumn(
@@ -88,24 +75,25 @@ fun GroupsScreen() {
                 .weight(1f)
                 .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            item { GroupCard(groupName = "A", teams = groupA) }
-            item { GroupCard(groupName = "B", teams = groupB) }
-            item { GroupCard(groupName = "C", teams = groupC) }
-            item { GroupCard(groupName = "D", teams = groupD) }
+        ){
+            item { MatchCard(matchNumber = 1, team1 = match1.first, team2 = match1.second) }
+            item { MatchCard(matchNumber = 2, team1 = match2.first, team2 = match2.second) }
+            item { MatchCard(matchNumber = 3, team1 = match3.first, team2 = match3.second) }
+            item { MatchCard(matchNumber = 4, team1 = match4.first, team2 = match4.second) }
         }
         ContinueButton(
             icon = R.drawable.fast_forward_filled,
-            continueTitle = "Nokaut faza",
+            continueTitle = "Slijedeća faza",
             continueClick = {}
         )
     }
 }
 
 @Composable
-fun GroupCard(
-    groupName: String,
-    teams: List<Team>
+fun MatchCard(
+    matchNumber: Int,
+    team1: Team,
+    team2: Team
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -118,27 +106,40 @@ fun GroupCard(
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = "GRUPA $groupName",
+                text = "UTAKMICA $matchNumber",
                 color = Green,
-                fontSize = 20.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-            teams.forEach { team ->
-                TeamItem(team = team)
+                MatchTeamItem(team = team1)
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "VS",
+                    color = Green,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
+
+                MatchTeamItem(team = team2)
+
         }
     }
 }
-
 @Composable
-fun TeamItem(
+fun MatchTeamItem(
     team: Team
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -155,54 +156,5 @@ fun TeamItem(
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
         )
-    }
-}
-@Composable
-fun Header(
-    text : String
-)
-{
-    Text(
-        text = text,
-        color = Color.White,
-        fontSize = 28.sp,
-        fontWeight = FontWeight.Bold
-    )
-}
-
-@Composable
-fun ContinueButton(
-    @DrawableRes icon : Int,
-    continueTitle : String,
-    continueClick : () -> Unit
-)
-{
-    Button(
-        onClick = continueClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.White
-        ),
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            Text(
-                text = continueTitle,
-                color = Color.Black,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Icon(
-                painter = painterResource(id = icon),
-                contentDescription = "arrow",
-                tint = Green,
-                modifier = Modifier.size(28.dp)
-            )
-        }
     }
 }
