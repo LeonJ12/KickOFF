@@ -1,6 +1,7 @@
 package com.example.kickoff.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 
 import androidx.compose.ui.res.painterResource
@@ -25,32 +27,23 @@ import androidx.compose.ui.text.font.FontWeight
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.kickoff.R
 import com.example.kickoff.SEMIFINALS_SCREEN
-import com.example.kickoff.Team
+import com.example.kickoff.data.PredictionViewModel
+import com.example.kickoff.data.Team
 
 
 
 @Composable
-fun QuarterfinalsScreen(navController : NavHostController)
+fun QuarterfinalsScreen(
+    navController : NavHostController,
+    viewModel: PredictionViewModel = viewModel()
+)
 {
-    val match1 = Pair(
-        Team("Njemačka", R.drawable.germany),
-        Team("Hrvatska", R.drawable.croatia)
-    )
-    val match2 = Pair(
-        Team("Škotska", R.drawable.scotland),
-        Team("Španjolska", R.drawable.spain)
-    )
-    val match3 = Pair(
-        Team("Slovenija", R.drawable.slovenia),
-        Team("Francuska", R.drawable.france)
-    )
-    val match4 = Pair(
-        Team("Danska", R.drawable.denmark),
-        Team("Poljska", R.drawable.poland)
-    )
+    val matches = viewModel.quarterFinalMatches
+    val isReady = viewModel.isQuarterfinalComplete()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -78,15 +71,28 @@ fun QuarterfinalsScreen(navController : NavHostController)
                 .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ){
-            item { MatchCard(matchNumber = 1, team1 = match1.first, team2 = match1.second) }
-            item { MatchCard(matchNumber = 2, team1 = match2.first, team2 = match2.second) }
-            item { MatchCard(matchNumber = 3, team1 = match3.first, team2 = match3.second) }
-            item { MatchCard(matchNumber = 4, team1 = match4.first, team2 = match4.second) }
+            items(matches.size) { index ->
+                val match = matches[index]
+                MatchCard(
+                    matchNumber = index + 1,
+                    team1 = match.first,
+                    team2 = match.second,
+                    matchIndex = index,
+                    stage = "QF",
+                    viewModel = viewModel
+                )
+            }
         }
         ContinueButton(
             icon = R.drawable.fast_forward_filled,
             continueTitle = "Slijedeća faza",
-            continueClick = {navController.navigate(SEMIFINALS_SCREEN)}
+            isEnabled = isReady,
+            continueClick = {
+                if (isReady) {
+                    viewModel.prepareSemifinals()
+                    navController.navigate(SEMIFINALS_SCREEN)
+                }
+            }
         )
     }
 }
@@ -95,8 +101,12 @@ fun QuarterfinalsScreen(navController : NavHostController)
 fun MatchCard(
     matchNumber: Int,
     team1: Team,
-    team2: Team
+    team2: Team,
+    matchIndex: Int,
+    stage: String,
+    viewModel: PredictionViewModel
 ) {
+    val winner = viewModel.knockoutWinners["${stage}_$matchIndex"]
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -115,7 +125,11 @@ fun MatchCard(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-                MatchTeamItem(team = team1)
+            MatchTeamItem(
+                team = team1,
+                isSelected = winner == team1,
+                onClick = { viewModel.selectKnockoutWinner(stage, matchIndex, team1) }
+            )
 
             Row(
                 modifier = Modifier
@@ -131,18 +145,29 @@ fun MatchCard(
                 )
             }
 
-                MatchTeamItem(team = team2)
+            MatchTeamItem(
+                team = team2,
+                isSelected = winner == team2,
+                onClick = { viewModel.selectKnockoutWinner(stage, matchIndex, team2) }
+            )
 
         }
     }
 }
 @Composable
 fun MatchTeamItem(
-    team: Team
+    team: Team,
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
-            .padding(vertical = 4.dp),
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(if (isSelected) Green else Color.Transparent)
+            .clickable { onClick() }
+            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -154,7 +179,7 @@ fun MatchTeamItem(
         )
         Text(
             text = team.name,
-            color = Color.Black,
+            color = if (isSelected) Color.White else Color.Black,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium
         )

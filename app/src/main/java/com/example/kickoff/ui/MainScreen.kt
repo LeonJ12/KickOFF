@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.kickoff.GROUPS_SCREEN
 import com.example.kickoff.R
-import com.example.kickoff.USERNAME_SCREEN
 
 val Green = Color(0xFF1E6030)
 val Yellow = Color(0xFFFFFF00)
@@ -56,7 +55,7 @@ fun MainScreen(navController : NavHostController)
         Description(
             title="WORLD CUP",
             year = "2026",
-            subtitle = "Napravite svoju vlastitu prognozu Svjetskog prvenstva 2026 – od grupne faze do finala.Izgradite svoj idealni ždrijeb nokaut-faze i podijelite ga s prijateljima!"
+            subtitle = "Napravite svoju vlastitu prognozu Svjetskog prvenstva 2026 – od grupne faze do finala.Izgradite svoj idealni ždrijeb nokaut-faze i pokažite vaše znanje!"
         )
         LoginButtons(
             guestIcon = R.drawable.green_user,
@@ -64,7 +63,7 @@ fun MainScreen(navController : NavHostController)
             guestTitle = "Nastavi kao gost",
             loginTitle = "Prijavi se",
             guestOnClick = {navController.navigate(GROUPS_SCREEN)},
-            userOnClick = {navController.navigate(USERNAME_SCREEN)}
+            userOnClick = {navController.navigate(GROUPS_SCREEN)}
         )
     }
 }

@@ -13,23 +13,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.kickoff.FINALS_SCREEN
 import com.example.kickoff.R
-import com.example.kickoff.Team
+import com.example.kickoff.data.PredictionViewModel
+
 
 
 @Composable
-fun SemiFinalsScreen(navController : NavHostController)
+fun SemiFinalsScreen(navController : NavHostController,
+                     viewModel: PredictionViewModel = viewModel()
+)
 {
-    val match1 = Pair(
-        Team("Njemačka", R.drawable.germany),
-        Team("Španjolska", R.drawable.spain)
-    )
-    val match2 = Pair(
-        Team("Francuska", R.drawable.france),
-        Team("Poljska", R.drawable.poland)
-    )
+    val matches = viewModel.semiFinalMatches
+    val isReady = viewModel.isSemifinalComplete()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -57,13 +55,28 @@ fun SemiFinalsScreen(navController : NavHostController)
                 .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(100.dp, Alignment.CenterVertically)
         ){
-            item { MatchCard(matchNumber = 1, team1 = match1.first, team2 = match1.second) }
-            item { MatchCard(matchNumber = 2, team1 = match2.first, team2 = match2.second) }
+            items(matches.size) { index ->
+                val match = matches[index]
+                MatchCard(
+                    matchNumber = index + 1,
+                    team1 = match.first,
+                    team2 = match.second,
+                    matchIndex = index,
+                    stage = "SF", // Oznaka faze
+                    viewModel = viewModel
+                )
+            }
         }
         ContinueButton(
             icon = R.drawable.fast_forward_filled,
             continueTitle = "Slijedeća faza",
-            continueClick = {navController.navigate(FINALS_SCREEN)}
+            isEnabled = isReady,
+            continueClick = {
+                if (isReady) {
+                    viewModel.prepareFinals()
+                    navController.navigate(FINALS_SCREEN)
+                }
+            }
         )
     }
 }

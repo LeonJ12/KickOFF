@@ -2,6 +2,7 @@ package com.example.kickoff.ui
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -29,18 +31,20 @@ import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.example.kickoff.MAIN_SCREEN
 import com.example.kickoff.R
-import com.example.kickoff.Team
+import com.example.kickoff.data.PredictionViewModel
+import com.example.kickoff.data.Team
 
 
 @Composable
-fun FinalsScreen(navController : NavHostController)
+fun FinalsScreen(navController : NavHostController,
+                 viewModel: PredictionViewModel = viewModel())
 {
-    val match1 = Pair(
-        Team("Njemačka", R.drawable.germany),
-        Team("Francuska", R.drawable.france)
-    )
+    val match = viewModel.finalMatch
+    val isReady = viewModel.isFinalComplete()
 
     Column(
         modifier = Modifier
@@ -73,12 +77,24 @@ fun FinalsScreen(navController : NavHostController)
                 .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ){
-            item { FinalMatchCard( team1 = match1.first, team2 = match1.second) }
+            if (match != null) {
+                item {
+                    FinalMatchCard(
+                        team1 = match.first,
+                        team2 = match.second,
+                        viewModel = viewModel
+                    )
+                }
+            }
         }
         FinalContinueButton(
             icon = R.drawable.black_user,
-            continueTitle = "Spremi predikciju",
-            continueClick = {}
+            continueTitle = "Novi turnir",
+            isEnabled = isReady,
+            continueClick = {
+                viewModel.resetGame()
+                navController.navigate(MAIN_SCREEN)
+            }
         )
     }
 }
@@ -154,20 +170,20 @@ fun FinalSmallButton(
 }
 @Composable
 fun FinalContinueButton(
-    @DrawableRes icon : Int,
-    continueTitle : String,
-    continueClick : () -> Unit
-)
-{
+    @DrawableRes icon: Int,
+    continueTitle: String,
+    isEnabled: Boolean = true,
+    continueClick: () -> Unit
+) {
     Button(
         onClick = continueClick,
+        enabled = isEnabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Black
+            containerColor = if (isEnabled) Color.Black else Color.Gray,
+            disabledContainerColor = Color.Gray
         ),
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
+        modifier = Modifier.fillMaxWidth().height(56.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -175,14 +191,14 @@ fun FinalContinueButton(
         ) {
             Text(
                 text = continueTitle,
-                color = Yellow,
+                color = if (isEnabled) Yellow else Color.LightGray,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
             Icon(
                 painter = painterResource(id = icon),
                 contentDescription = "arrow",
-                tint = Yellow,
+                tint = if (isEnabled) Yellow else Color.LightGray,
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -191,54 +207,60 @@ fun FinalContinueButton(
 @Composable
 fun FinalMatchCard(
     team1: Team,
-    team2: Team
+    team2: Team,
+    viewModel: PredictionViewModel
 ) {
+    val winner = viewModel.knockoutWinners["FINAL_0"]
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Green
-        )
+        colors = CardDefaults.cardColors(containerColor = Green)
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Kruna prvenstva",
+                text = if (winner != null) "Novi prvak je: ${winner.name}" else "Odaberi pobjednika",
                 color = Color.White,
                 fontSize = 28.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-            FinalMatchTeamItem(team = team1)
+            FinalMatchTeamItem(
+                team = team1,
+                isSelected = winner == team1,
+                onClick = { viewModel.selectKnockoutWinner("FINAL", 0, team1) }
+            )
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = "VS",
-                    color = Yellow,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Text(text = "VS", color = Yellow, fontSize = 22.sp, fontWeight = FontWeight.Bold)
             }
 
-            FinalMatchTeamItem(team = team2)
-
+            FinalMatchTeamItem(
+                team = team2,
+                isSelected = winner == team2,
+                onClick = { viewModel.selectKnockoutWinner("FINAL", 0, team2) }
+            )
         }
     }
 }
 @Composable
 fun FinalMatchTeamItem(
-    team: Team
+    team: Team,
+    isSelected: Boolean,
+    onClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
-            .padding(vertical = 4.dp),
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(if (isSelected) Yellow else Color.Transparent)
+            .clickable { onClick() }
+            .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -250,7 +272,7 @@ fun FinalMatchTeamItem(
         )
         Text(
             text = team.name,
-            color = Color.White,
+            color = if (isSelected) Color.Black else Color.White,
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium
         )

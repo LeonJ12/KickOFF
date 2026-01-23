@@ -1,4 +1,4 @@
-package com.example.kickoff
+package com.example.kickoff.data
 
 import androidx.annotation.DrawableRes
 
