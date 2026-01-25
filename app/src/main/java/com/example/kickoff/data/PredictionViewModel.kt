@@ -4,10 +4,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import com.example.kickoff.R
-
-
-data class Group(val name: String, val teams: List<Team>)
-
 class PredictionViewModel : ViewModel() {
 
 
@@ -63,10 +59,10 @@ class PredictionViewModel : ViewModel() {
         val groupC = _selectedGroupTeams["C"]!!
         val groupD = _selectedGroupTeams["D"]!!
 
-        quarterFinalMatches.add(Pair(groupA[0], groupB[1])) // QF1
-        quarterFinalMatches.add(Pair(groupB[0], groupA[1])) // QF2
-        quarterFinalMatches.add(Pair(groupC[0], groupD[1])) // QF3
-        quarterFinalMatches.add(Pair(groupD[0], groupC[1])) // QF4
+        quarterFinalMatches.add(Pair(groupA[0], groupB[1]))
+        quarterFinalMatches.add(Pair(groupB[0], groupA[1]))
+        quarterFinalMatches.add(Pair(groupC[0], groupD[1]))
+        quarterFinalMatches.add(Pair(groupD[0], groupC[1]))
     }
 
     fun prepareSemifinals() {
@@ -102,7 +98,6 @@ class PredictionViewModel : ViewModel() {
     fun isFinalComplete(): Boolean = _knockoutWinners.containsKey("FINAL_0")
 
     fun resetGame() {
-
         _selectedGroupTeams.clear()
         _knockoutWinners.clear()
         quarterFinalMatches.clear()
