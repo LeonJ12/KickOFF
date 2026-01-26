@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1068390537190",
+    "project_id": "kickoff-919aa",
+    "storage_bucket": "kickoff-919aa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068390537190:android:a29b541bda8024f02c2827",
+        "android_client_info": {
+          "package_name": "com.example.androidlv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDU_0VFOyjrg58CSJ0bO-rWcjxtNwdfINc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1068390537190:android:b8ec99c7b5516fcc2c2827",
+        "android_client_info": {
+          "package_name": "com.example.kickoff"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDU_0VFOyjrg58CSJ0bO-rWcjxtNwdfINc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

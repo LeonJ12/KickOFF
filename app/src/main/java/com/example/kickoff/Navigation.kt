@@ -12,10 +12,13 @@ import com.example.kickoff.ui.FinalsScreen
 import com.example.kickoff.ui.GroupsScreen
 import com.example.kickoff.ui.MainScreen
 import com.example.kickoff.ui.QuarterfinalsScreen
+import com.example.kickoff.ui.RulesScreen
 import com.example.kickoff.ui.SemiFinalsScreen
 
 
 const val MAIN_SCREEN = "main_screen"
+
+const val RULES_SCREEN = "rules_screen"
 const val GROUPS_SCREEN = "groups_screen"
 const val QUARTERFINALS_SCREEN = "quarterfinals_screen"
 const val SEMIFINALS_SCREEN = "semifinals_screen"
@@ -36,8 +39,9 @@ fun AppNavigation()
         composable(MAIN_SCREEN) {
             MainScreen(navController = navController)
         }
-
-
+        composable(RULES_SCREEN){
+            RulesScreen(navController = navController)
+        }
         composable(GROUPS_SCREEN) {
             GroupsScreen(
                 navController = navController,

@@ -34,6 +34,7 @@ import com.example.kickoff.QUARTERFINALS_SCREEN
 import com.example.kickoff.R
 import com.example.kickoff.data.Team
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.example.kickoff.data.PredictionViewModel
 
 
@@ -149,11 +150,10 @@ fun TeamItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Icon(
-            painter = painterResource(id = team.flag),
-            contentDescription = "zastava",
-            modifier = Modifier.size(32.dp),
-            tint = Color.Unspecified
+        AsyncImage(
+            model = team.flag,
+            contentDescription = "Zastava",
+            modifier = Modifier.size(32.dp)
         )
         Text(
             text = team.name,

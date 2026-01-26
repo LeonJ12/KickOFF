@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.kickoff.GROUPS_SCREEN
 import com.example.kickoff.R
+import com.example.kickoff.RULES_SCREEN
 
 val Green = Color(0xFF1E6030)
 val Yellow = Color(0xFFFFFF00)
@@ -57,12 +58,12 @@ fun MainScreen(navController : NavHostController)
             year = "2026",
             subtitle = "Napravite svoju vlastitu prognozu Svjetskog prvenstva 2026 – od grupne faze do finala.Izgradite svoj idealni ždrijeb nokaut-faze i pokažite vaše znanje!"
         )
-        LoginButtons(
-            guestIcon = R.drawable.green_user,
+        StartButtons(
+            guestIcon = R.drawable.checklist,
             userIcon = R.drawable.black_user,
-            guestTitle = "Nastavi kao gost",
-            loginTitle = "Prijavi se",
-            guestOnClick = {navController.navigate(GROUPS_SCREEN)},
+            guestTitle = "Pravila igre",
+            loginTitle = "Nastavi kao gost",
+            rulesOnClick = {navController.navigate(RULES_SCREEN)},
             userOnClick = {navController.navigate(GROUPS_SCREEN)}
         )
     }
@@ -137,12 +138,12 @@ fun Description(
     }
 }
 @Composable
-fun LoginButtons(
+fun StartButtons(
     @DrawableRes guestIcon: Int,
     @DrawableRes userIcon: Int,
     guestTitle : String,
     loginTitle : String,
-    guestOnClick: () -> Unit,
+    rulesOnClick: () -> Unit,
     userOnClick : () -> Unit
 ) {
     Column(
@@ -152,7 +153,7 @@ fun LoginButtons(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         Button(
-            onClick = guestOnClick,
+            onClick = rulesOnClick,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color.White
             ),
@@ -167,7 +168,7 @@ fun LoginButtons(
             ) {
                 Icon(
                     painter = painterResource(id = guestIcon),
-                    contentDescription = "logoHuman",
+                    contentDescription = "checklist",
                     tint = Green,
                     modifier = Modifier.size(28.dp)
                 )

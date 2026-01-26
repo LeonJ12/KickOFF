@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.kickoff.MAIN_SCREEN
 import com.example.kickoff.R
 import com.example.kickoff.data.PredictionViewModel
@@ -264,11 +265,10 @@ fun FinalMatchTeamItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Icon(
-            painter = painterResource(id = team.flag),
-            contentDescription = "zastava",
-            modifier = Modifier.size(35.dp),
-            tint = Color.Unspecified
+        AsyncImage(
+            model = team.flag,
+            contentDescription = "Zastava",
+            modifier = Modifier.size(32.dp)
         )
         Text(
             text = team.name,

@@ -1,28 +1,43 @@
 package com.example.kickoff.data
 
+
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
-import com.example.kickoff.R
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
+
 class PredictionViewModel : ViewModel() {
+    val groups = mutableStateListOf<Group>()
+    val db = Firebase.firestore
 
+    init {
+        fetchGroups()
+    }
+    private fun fetchGroups() {
+        db.collection("groups")
+            .get()
+            .addOnSuccessListener { result ->
+                val loadedGroups = result.documents.mapNotNull { doc ->
+                    groups.clear()
+                        val groupName = doc.getString("name") ?: return@mapNotNull null
 
-    val groups = listOf(
-        Group("A", listOf(Team("Njemačka", R.drawable.germany), Team("Škotska", R.drawable.scotland), Team("Mađarska", R.drawable.hungary), Team("Švicarska", R.drawable.switzerland))),
-        Group("B", listOf(Team("Španjolska", R.drawable.spain), Team("Hrvatska", R.drawable.croatia), Team("Italija", R.drawable.italy), Team("Albanija", R.drawable.albania))),
-        Group("C", listOf(Team("Slovenija", R.drawable.slovenia), Team("Danska", R.drawable.denmark), Team("Srbija", R.drawable.serbia), Team("Engleska", R.drawable.england))),
-        Group("D", listOf(Team("Poljska", R.drawable.poland), Team("Nizozemska", R.drawable.netherlands), Team("Austrija", R.drawable.austria), Team("Francuska", R.drawable.france)))
-    )
+                        val teamsRaw = doc.get("teams") as? List<Map<String, String>> ?: emptyList()
 
+                        val teamList = teamsRaw.map { teamMap ->
+                            Team(
+                                name = teamMap["name"] ?: "",
+                                flag = teamMap["flag"] ?: ""
+                            )
+                        }
+                        Group(groupName, teamList)
+                }
+                groups.addAll(loadedGroups.sortedBy { it.name })
+            }
+    }
+     val selectedGroupTeams = mutableStateMapOf<String, MutableList<Team>>()
+     val knockoutWinners = mutableStateMapOf<String, Team>()
 
-
-
-    private val _selectedGroupTeams = mutableStateMapOf<String, MutableList<Team>>()
-    val selectedGroupTeams: Map<String, List<Team>> = _selectedGroupTeams
-
-
-    private val _knockoutWinners = mutableStateMapOf<String, Team>()
-    val knockoutWinners: Map<String, Team> = _knockoutWinners
 
 
     var quarterFinalMatches = mutableStateListOf<Pair<Team, Team>>()
@@ -32,7 +47,7 @@ class PredictionViewModel : ViewModel() {
 
 
     fun toggleGroupSelection(groupName: String, team: Team) {
-        val currentList = _selectedGroupTeams.getOrPut(groupName) { mutableStateListOf() }
+        val currentList = selectedGroupTeams.getOrPut(groupName) { mutableStateListOf() }
 
         if (currentList.contains(team)) {
             currentList.remove(team)
@@ -45,7 +60,7 @@ class PredictionViewModel : ViewModel() {
 
     fun areGroupsCompleted(): Boolean {
 
-        return groups.all { _selectedGroupTeams[it.name]?.size == 2 }
+        return groups.all { selectedGroupTeams[it.name]?.size == 2 }
     }
 
 
@@ -54,10 +69,10 @@ class PredictionViewModel : ViewModel() {
         if (quarterFinalMatches.isNotEmpty()) return
 
 
-        val groupA = _selectedGroupTeams["A"]!!
-        val groupB = _selectedGroupTeams["B"]!!
-        val groupC = _selectedGroupTeams["C"]!!
-        val groupD = _selectedGroupTeams["D"]!!
+        val groupA = selectedGroupTeams["A"]!!
+        val groupB = selectedGroupTeams["B"]!!
+        val groupC = selectedGroupTeams["C"]!!
+        val groupD = selectedGroupTeams["D"]!!
 
         quarterFinalMatches.add(Pair(groupA[0], groupB[1]))
         quarterFinalMatches.add(Pair(groupB[0], groupA[1]))
@@ -68,18 +83,18 @@ class PredictionViewModel : ViewModel() {
     fun prepareSemifinals() {
         semiFinalMatches.clear()
 
-        val qf1Winner = _knockoutWinners["QF_0"]
-        val qf2Winner = _knockoutWinners["QF_1"]
-        val qf3Winner = _knockoutWinners["QF_2"]
-        val qf4Winner = _knockoutWinners["QF_3"]
+        val qf1Winner = knockoutWinners["QF_0"]
+        val qf2Winner = knockoutWinners["QF_1"]
+        val qf3Winner = knockoutWinners["QF_2"]
+        val qf4Winner = knockoutWinners["QF_3"]
 
         if (qf1Winner != null && qf2Winner != null) semiFinalMatches.add(Pair(qf1Winner, qf2Winner))
         if (qf3Winner != null && qf4Winner != null) semiFinalMatches.add(Pair(qf3Winner, qf4Winner))
     }
 
     fun prepareFinals() {
-        val sf1Winner = _knockoutWinners["SF_0"]
-        val sf2Winner = _knockoutWinners["SF_1"]
+        val sf1Winner = knockoutWinners["SF_0"]
+        val sf2Winner = knockoutWinners["SF_1"]
 
         if (sf1Winner != null && sf2Winner != null) {
             finalMatch = Pair(sf1Winner, sf2Winner)
@@ -89,17 +104,17 @@ class PredictionViewModel : ViewModel() {
 
 
     fun selectKnockoutWinner(stagePrefix: String, matchIndex: Int, winner: Team) {
-        _knockoutWinners["${stagePrefix}_$matchIndex"] = winner
+        knockoutWinners["${stagePrefix}_$matchIndex"] = winner
     }
 
 
-    fun isQuarterfinalComplete(): Boolean = (0..3).all { _knockoutWinners.containsKey("QF_$it") }
-    fun isSemifinalComplete(): Boolean = (0..1).all { _knockoutWinners.containsKey("SF_$it") }
-    fun isFinalComplete(): Boolean = _knockoutWinners.containsKey("FINAL_0")
+    fun isQuarterfinalComplete(): Boolean = (0..3).all { knockoutWinners.containsKey("QF_$it") }
+    fun isSemifinalComplete(): Boolean = (0..1).all { knockoutWinners.containsKey("SF_$it") }
+    fun isFinalComplete(): Boolean = knockoutWinners.containsKey("FINAL_0")
 
     fun resetGame() {
-        _selectedGroupTeams.clear()
-        _knockoutWinners.clear()
+        selectedGroupTeams.clear()
+        knockoutWinners.clear()
         quarterFinalMatches.clear()
         semiFinalMatches.clear()
         finalMatch = null
