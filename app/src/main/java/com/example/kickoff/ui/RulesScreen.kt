@@ -12,11 +12,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.example.kickoff.R
+import com.example.kickoff.data.PredictionViewModel
 
 @Composable
-fun RulesScreen(navController: NavHostController) {
+fun RulesScreen(navController: NavHostController,
+                viewModel: PredictionViewModel = viewModel()) {
+
+    val icons = viewModel.iconsState
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -31,7 +36,7 @@ fun RulesScreen(navController: NavHostController) {
             contentAlignment = Alignment.CenterStart
         ) {
             SmallButton(
-                icon = R.drawable.arrow_back,
+                icon = icons.arrowBack,
                 backOnClick = { navController.popBackStack() }
             )
         }

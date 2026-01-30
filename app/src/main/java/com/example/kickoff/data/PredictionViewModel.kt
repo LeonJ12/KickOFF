@@ -1,8 +1,11 @@
 package com.example.kickoff.data
 
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
@@ -13,6 +16,7 @@ class PredictionViewModel : ViewModel() {
 
     init {
         fetchGroups()
+        fetchIcons()
     }
     private fun fetchGroups() {
         db.collection("groups")
@@ -33,6 +37,22 @@ class PredictionViewModel : ViewModel() {
                         Group(groupName, teamList)
                 }
                 groups.addAll(loadedGroups.sortedBy { it.name })
+            }
+    }
+    var iconsState by mutableStateOf(AppIcons())
+    private fun fetchIcons()
+    {
+        db.collection("icons")
+            .get()
+            .addOnSuccessListener { result ->
+                val dokument = result.documents[0]
+                iconsState = AppIcons(
+                    trophy = dokument.getString("trophy") ?: "",
+                    checklist = dokument.getString("checklist") ?: "",
+                    user = dokument.getString("user") ?: "",
+                    arrowBack = dokument.getString("arrowBack") ?: "",
+                    arrowForward = dokument.getString("arrowForward") ?: ""
+                )
             }
     }
      val selectedGroupTeams = mutableStateMapOf<String, MutableList<Team>>()

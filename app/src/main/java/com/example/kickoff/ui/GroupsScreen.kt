@@ -1,5 +1,4 @@
 package com.example.kickoff.ui
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,21 +16,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
-
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.kickoff.QUARTERFINALS_SCREEN
-import com.example.kickoff.R
 import com.example.kickoff.data.Team
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
@@ -44,9 +40,7 @@ fun GroupsScreen(navController : NavHostController,
 ) {
     val groups = viewModel.groups
     val isReady = viewModel.areGroupsCompleted()
-
-
-
+    val icons = viewModel.iconsState
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,7 +55,7 @@ fun GroupsScreen(navController : NavHostController,
             verticalAlignment = Alignment.CenterVertically
         ) {
             SmallButton(
-                icon = R.drawable.arrow_back,
+                icon = icons.arrowBack,
                 backOnClick = {navController.popBackStack() }
             )
             Header(
@@ -84,7 +78,7 @@ fun GroupsScreen(navController : NavHostController,
             }
         }
         ContinueButton(
-            icon = R.drawable.fast_forward_filled,
+            icon = icons.arrowForward,
             continueTitle = "Nokaut faza",
             isEnabled = isReady,
             continueClick = {
@@ -178,7 +172,7 @@ fun Header(
 
 @Composable
 fun ContinueButton(
-    @DrawableRes icon: Int,
+    icon: String,
     continueTitle: String,
     isEnabled: Boolean = true,
     continueClick: () -> Unit
@@ -205,10 +199,10 @@ fun ContinueButton(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
-            Icon(
-                painter = painterResource(id = icon),
+            AsyncImage(
+                model = icon,
                 contentDescription = "arrow",
-                tint = if (isEnabled) Green else Color.DarkGray,
+                colorFilter = if (isEnabled) ColorFilter.tint(Green) else ColorFilter.tint(Color.DarkGray),
                 modifier = Modifier.size(28.dp)
             )
         }
@@ -216,7 +210,7 @@ fun ContinueButton(
 }
 @Composable
 fun SmallButton(
-    @DrawableRes icon: Int,
+    icon : String,
     backOnClick : () -> Unit
 ) {
     Button(
@@ -227,8 +221,8 @@ fun SmallButton(
         contentPadding = PaddingValues(),
         modifier = Modifier.size(50.dp)
     ) {
-        Icon(
-            painter = painterResource(id = icon),
+        AsyncImage(
+            model= icon,
             contentDescription = "ikonica-arrow",
             modifier = Modifier.size(32.dp)
         )

@@ -1,6 +1,6 @@
 package com.example.kickoff.ui
 
-import androidx.annotation.DrawableRes
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,14 +18,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.ColorFilter
+
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 
@@ -35,7 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.kickoff.MAIN_SCREEN
-import com.example.kickoff.R
+
 import com.example.kickoff.data.PredictionViewModel
 import com.example.kickoff.data.Team
 
@@ -46,7 +47,7 @@ fun FinalsScreen(navController : NavHostController,
 {
     val match = viewModel.finalMatch
     val isReady = viewModel.isFinalComplete()
-
+    val icons = viewModel.iconsState
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -61,7 +62,7 @@ fun FinalsScreen(navController : NavHostController,
             verticalAlignment = Alignment.CenterVertically
         ) {
             FinalSmallButton(
-                icon = R.drawable.arrow_back,
+                icon = icons.arrowBack,
                 backOnClick = {navController.popBackStack() }
             )
             FinalHeader(
@@ -70,7 +71,7 @@ fun FinalsScreen(navController : NavHostController,
         }
         FinalDescription(
             text = "Odaberi pobjednika Svjetskog prvenstva!",
-            icon = R.drawable.trophy
+            icon = icons.trophy
         )
         LazyColumn(
             modifier = Modifier
@@ -89,7 +90,7 @@ fun FinalsScreen(navController : NavHostController,
             }
         }
         FinalContinueButton(
-            icon = R.drawable.black_user,
+            icon = icons.arrowForward,
             continueTitle = "Novi turnir",
             isEnabled = isReady,
             continueClick = {
@@ -102,7 +103,7 @@ fun FinalsScreen(navController : NavHostController,
 @Composable
 fun FinalDescription(
     text: String,
-    @DrawableRes icon: Int
+    icon: String
 )
 {
     Card(
@@ -119,11 +120,11 @@ fun FinalDescription(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Icon(
-                painter = painterResource(id = icon),
+            AsyncImage(
+                model = icon,
                 contentDescription = "trofej",
                 modifier = Modifier.size(140.dp),
-                tint = Color.Black
+                colorFilter = ColorFilter.tint(Color.Black)
             )
             Text(
                 text = text,
@@ -150,7 +151,7 @@ fun FinalHeader(
 }
 @Composable
 fun FinalSmallButton(
-    @DrawableRes icon: Int,
+    icon: String,
     backOnClick : () -> Unit
 ) {
     Button(
@@ -161,17 +162,17 @@ fun FinalSmallButton(
         contentPadding = PaddingValues(),
         modifier = Modifier.size(50.dp)
     ) {
-        Icon(
-            painter = painterResource(id = icon),
+        AsyncImage(
+            model = icon,
             contentDescription = "ikonica-arrow",
             modifier = Modifier.size(32.dp),
-            tint = Color.Black
+            colorFilter = ColorFilter.tint(Color.Black)
         )
     }
 }
 @Composable
 fun FinalContinueButton(
-    @DrawableRes icon: Int,
+    icon: String,
     continueTitle: String,
     isEnabled: Boolean = true,
     continueClick: () -> Unit
@@ -196,10 +197,10 @@ fun FinalContinueButton(
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             )
-            Icon(
-                painter = painterResource(id = icon),
+            AsyncImage(
+                model = icon,
                 contentDescription = "arrow",
-                tint = if (isEnabled) Yellow else Color.LightGray,
+                colorFilter = if (isEnabled) ColorFilter.tint(Yellow) else ColorFilter.tint(Color.LightGray),
                 modifier = Modifier.size(28.dp)
             )
         }

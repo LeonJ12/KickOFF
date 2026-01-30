@@ -37,10 +37,12 @@ fun AppNavigation()
     )
     {
         composable(MAIN_SCREEN) {
-            MainScreen(navController = navController)
+            MainScreen(navController = navController,
+                viewModel = sharedViewModel)
         }
         composable(RULES_SCREEN){
-            RulesScreen(navController = navController)
+            RulesScreen(navController = navController,
+                viewModel = sharedViewModel)
         }
         composable(GROUPS_SCREEN) {
             GroupsScreen(

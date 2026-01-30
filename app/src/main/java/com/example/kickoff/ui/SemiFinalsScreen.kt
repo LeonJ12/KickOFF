@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.kickoff.FINALS_SCREEN
-import com.example.kickoff.R
 import com.example.kickoff.data.PredictionViewModel
 
 
@@ -28,6 +27,7 @@ fun SemiFinalsScreen(navController : NavHostController,
 {
     val matches = viewModel.semiFinalMatches
     val isReady = viewModel.isSemifinalComplete()
+    val icons = viewModel.iconsState
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,7 +42,7 @@ fun SemiFinalsScreen(navController : NavHostController,
             verticalAlignment = Alignment.CenterVertically
         ) {
             SmallButton(
-                icon = R.drawable.arrow_back,
+                icon = icons.arrowBack,
                 backOnClick = {navController.popBackStack() }
             )
             Header(
@@ -68,7 +68,7 @@ fun SemiFinalsScreen(navController : NavHostController,
             }
         }
         ContinueButton(
-            icon = R.drawable.fast_forward_filled,
+            icon = icons.arrowForward,
             continueTitle = "Slijedeća faza",
             isEnabled = isReady,
             continueClick = {

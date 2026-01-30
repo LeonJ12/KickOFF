@@ -1,7 +1,5 @@
 package com.example.kickoff.ui
 
-
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,14 +14,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.ColorFilter
+
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -31,18 +30,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.AsyncImage
 import com.example.kickoff.GROUPS_SCREEN
-import com.example.kickoff.R
+
 import com.example.kickoff.RULES_SCREEN
+import com.example.kickoff.data.PredictionViewModel
 
 val Green = Color(0xFF1E6030)
 val Yellow = Color(0xFFFFFF00)
 
 
 @Composable
-fun MainScreen(navController : NavHostController)
+fun MainScreen(navController : NavHostController,
+               viewModel: PredictionViewModel = viewModel())
 {
+    val icons = viewModel.iconsState
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -51,7 +56,7 @@ fun MainScreen(navController : NavHostController)
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        TitleLogo(icon = R.drawable.trophy)
+        TitleLogo(icon = icons.trophy)
 
         Description(
             title="WORLD CUP",
@@ -59,10 +64,10 @@ fun MainScreen(navController : NavHostController)
             subtitle = "Napravite svoju vlastitu prognozu Svjetskog prvenstva 2026 – od grupne faze do finala.Izgradite svoj idealni ždrijeb nokaut-faze i pokažite vaše znanje!"
         )
         StartButtons(
-            guestIcon = R.drawable.checklist,
-            userIcon = R.drawable.black_user,
-            guestTitle = "Pravila igre",
-            loginTitle = "Nastavi kao gost",
+            rulesIcon = icons.checklist,
+            userIcon = icons.user,
+            rulesTitle = "Pravila igre",
+            startTitle = "Pokreni igru",
             rulesOnClick = {navController.navigate(RULES_SCREEN)},
             userOnClick = {navController.navigate(GROUPS_SCREEN)}
         )
@@ -71,7 +76,7 @@ fun MainScreen(navController : NavHostController)
 
 @Composable
 fun TitleLogo(
-    @DrawableRes icon: Int
+     icon: String
 ){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -96,8 +101,8 @@ fun TitleLogo(
                 .background(Yellow),
             contentAlignment = Alignment.Center
         ){
-            Icon(
-                painter = painterResource(id = icon),
+            AsyncImage(
+                model = icon,
                 contentDescription = "LogoTrofeja",
                 modifier = Modifier.size(300.dp)
             )
@@ -139,10 +144,10 @@ fun Description(
 }
 @Composable
 fun StartButtons(
-    @DrawableRes guestIcon: Int,
-    @DrawableRes userIcon: Int,
-    guestTitle : String,
-    loginTitle : String,
+     rulesIcon: String,
+     userIcon: String,
+    rulesTitle : String,
+    startTitle : String,
     rulesOnClick: () -> Unit,
     userOnClick : () -> Unit
 ) {
@@ -166,15 +171,14 @@ fun StartButtons(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = guestIcon),
+                AsyncImage(
+                    model = rulesIcon,
                     contentDescription = "checklist",
-                    tint = Green,
+                    colorFilter = ColorFilter.tint(Green),
                     modifier = Modifier.size(28.dp)
                 )
-
                 Text(
-                    text = guestTitle,
+                    text = rulesTitle,
                     color = Color.Black,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
@@ -196,14 +200,14 @@ fun StartButtons(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = userIcon),
+                AsyncImage(
+                    model = userIcon,
                     contentDescription = "logoHuman",
-                    tint = Color.Black,
+                    colorFilter = ColorFilter.tint(Color.Black),
                     modifier = Modifier.size(28.dp)
                 )
                 Text(
-                    text = loginTitle,
+                    text = startTitle,
                     color = Color.Black,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
