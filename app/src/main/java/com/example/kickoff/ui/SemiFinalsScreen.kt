@@ -62,7 +62,7 @@ fun SemiFinalsScreen(navController : NavHostController,
                     team1 = match.first,
                     team2 = match.second,
                     matchIndex = index,
-                    stage = "SF", // Oznaka faze
+                    stage = "SF",
                     viewModel = viewModel
                 )
             }
