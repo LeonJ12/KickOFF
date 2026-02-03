@@ -22,11 +22,11 @@ class PredictionViewModel : ViewModel() {
         db.collection("groups")
             .get()
             .addOnSuccessListener { result ->
-                val loadedGroups = result.documents.mapNotNull { doc ->
+                val loadedGroups = result.documents.map { doc ->
                     groups.clear()
-                        val groupName = doc.getString("name") ?: return@mapNotNull null
+                        val groupName = doc.getString("name") ?: ""
 
-                        val teamsRaw = doc.get("teams") as? List<Map<String, String>> ?: emptyList()
+                    val teamsRaw = doc.get("teams") as? List<Map<String, String>> ?: emptyList()
 
                         val teamList = teamsRaw.map { teamMap ->
                             Team(
